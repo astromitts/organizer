@@ -72,7 +72,7 @@ class Login(View):
             has_valid_policy = login_attempt['user'].appuser.has_valid_policy
             request.session['has_valid_policy'] = has_valid_policy
             if has_valid_policy:
-                return redirect(reverse('home'))
+                return redirect(reverse('dashboard'))
             else:
                 return redirect(reverse('policy_agreement'))
         else:
@@ -106,7 +106,7 @@ class PolicyAgreement(View):
             log.policy = Policy.get_current()
             log.save()
             request.session['has_valid_policy'] = True
-            return redirect(reverse('home'))
+            return redirect(reverse('dashboard'))
         context = {'form': self.form()}
         return HttpResponse(self.template.render(context, request))
 

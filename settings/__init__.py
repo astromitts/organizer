@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_summernote',
     'rest_framework',
+    'appcalendar',
     'appuser',
+    'organizer',
 ]
 
 MIDDLEWARE = [
@@ -51,8 +53,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'appuser.appuser_middleware.session_request_validation',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'appuser.appuser_middleware.session_request_validation',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 

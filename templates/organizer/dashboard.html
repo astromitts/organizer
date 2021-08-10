@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %} | Dashboard{% endblock %}
+
+{% block extra_scripts %}
+<script type="text/javascript" src="{% static 'angular/dashboard.js' %}"></script>
+<style>
+.goal {
+	border-radius: 10px;
+	border: 1px solid #CCCCCC;
+	min-height: 6rem;
+	width: 100%;
+	margin-bottom: 2rem;
+}
+.goal-done {
+	min-height: 9rem;
+}
+.goalBody {
+	
+}
+.goalDetail {
+	display:  inline-block;
+}
+.goalTools button {
+	width: 100%;
+}
+.goalTools button.delete {
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+ .shift {
+ 	display: block;
+	min-width: 3rem;
+	width: 3rem;
+ }
+ .shift button {
+ }
+ .shiftRight button {
+ 	float: right;
+	border-top-right-radius: 10px;
+ }
+ .shiftLeft button {
+ 	float: left;
+	border-top-left-radius: 10px;
+ }
+ .shiftRight {
+ 	float: right;
+ }
+ .shiftLeft {
+ 	float: left;
+ }
+</style>
+{% endblock %}
+
+{% block page_content %}
+	{% verbatim %}
+	<div class="row">
+		<div class="col">
+			<h1>Today is: {{day.display_date}}</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<h2>Schedule</h2>
+		</div>
+		<div class="col">
+			<table class="table">
+				<tr ng-repeat="event in events">
+					<td>{{event.start_time_display}} - {{event.end_time_display}}</td><td>{{event.name}}</td>
+					<td><button ng-click="deleteEvent(event)">delete</button></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="row newEvent">
+		<div class="col-12">
+			<p class="font-weight-bold">Add Event</p>
+		</div>
+		<div class="col-md-3 col-sm-12">
+			<label for="event_start_time">Start time:</label>
+			<select name="event_start_time" ng-model="newEvent.start_time" class="form-control">
+				<option ng-repeat="time in time_options" value="{{time}}">{{time}}</option>
+			</select>
+		</div>
+		<div class="col-md-3 col-sm-12">
+			<label for="event_start_time">End time:</label>
+			<select name="event_end_time" ng-model="newEvent.end_time" class="form-control">
+				<option ng-repeat="time in time_options" value="{{time}}">{{time}}</option>
+			</select>
+		</div>
+		<div class="col">
+			<label for="event_title">Title:</label>
+			<div class="input-group">
+				<input id="id_event_title" name="event_title" type="text" ng-model="newEvent.name" class="form-control" />
+			    <div class="input-group-append">
+			      <div class="input-group-text" id="btnGroupAddon" ng-click="addEvent(newEvent)">+</div>
+			    </div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h2>Goals</h2>
+		</div>
+	</div>
+	<div class="row newGoal">
+		<div class="col">
+			<label for="newDayGoal">Add Goal:</label>
+			<div class="input-group">
+			    <div class="input-group-prepend">
+			      <div class="input-group-text" id="btnGroupAddon" ng-click="addGoal('day', newDayGoal)">+</div>
+			    </div>
+				<input id="id_newDayGoal" name="newDayGoal" type="text" ng-model="newDayGoal" class="form-control" />
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4 col-sm-12" ng-repeat="dropzone in dropzones" >
+			<span class="dropzone">
+			<h1>{{dropzone.displayName}}</h1>
+			<div class="goal goal-{{dropzone.key}}"
+				ng-repeat="goal in dropzone.goals"
+        		>
+				<div class="goalBody">
+					<div class="shift shiftLeft">
+						<button ng-click="retreatGoal(goal, dropzone)" ng-show="dropzone.prevCol"><</button>&nbsp;
+					</div>
+					<div class="goalDetail">
+	    				<h5 class="card-title">{{goal.name}}</h5>
+	    				<span ng-repeat="taskzone in goal.dropzones">
+		    				<p>{{taskzone.displayName}}:</p>
+		    				<table class="table">
+		    					<tr ng-repeat="task in taskzone.tasks">
+		    						<td ng-show="taskzone.prevCol">
+		    							<button ng-click="retreatTask(goal, task, taskzone)">{{taskzone.prevCol}}</button>
+		    						</td>
+		    						<td>{{task.name}}</td>
+		    						<td ng-show="taskzone.nextCol">
+		    							<button ng-click="advanceTask(goal, task, taskzone)">{{taskzone.nextCol}}</button>
+		    						</td>
+		    					</tr>
+		    				</table>
+	    				</span>
+	    				<label for="id_newTask_{{goal.pk}}">Add Task:</label>
+						<div class="input-group">
+						    <div class="input-group-prepend">
+						      <div class="input-group-text" id="btnGroupAddon" ng-click="addTask(goal, newTask)">+</div>
+						    </div>
+							<input id="id_newTask_{{goal.pk}}" name="newTask" type="text" ng-model="newTask" class="form-control" />
+						</div>
+    				</div>
+
+					<div class="shift shiftRight">
+						<button ng-click="advanceGoal(goal, dropzone)" ng-show="dropzone.nextCol">></button>&nbsp;
+					</div>
+    			</div>
+				<div class="goalTools">
+    				<button class="archive" ng-show="dropzone.key == 'done'" ng-click="archiveGoal(goal, dropzone)">archive</button>
+    				<button class="delete" ng-click="deleteGoal(goal, dropzone)">delete</button>
+    			</div>
+			</div>
+			</span>
+		</div>
+	</div>
+	{% endverbatim %}
+{% endblock %}
